@@ -76,7 +76,7 @@ def decode_acc_hex(acc_hex, speed):
     # Each row is a timestamp. Since the accelerometer sensor is at 25Hz, it means 1 timestamp has 25 mini steps.
     rotated_acc_list = list()
     for x_s, y_s, z_s in tqdm(decoded_acc_df[['x', 'y', 'z']].values, 
-                              desc="Aggregating 25Hz to 1Hz for accelerometer signals."):
+                              desc="Aggregating accelerometer signals from 25Hz to 1Hz."):
         # x_s, y_s, and z_s are a list of 25 mini steps.  
         rotated_acc_mini_step_list = list()
         
