@@ -73,10 +73,13 @@ def decode_acc_hex(acc_hex, speed):
     idle_df = decoded_acc_df[idle_index]
     R = calcualte_rotation_factor(idle_df)
     
+#     return decoded_acc_df[['x', 'y', 'z']]
+    
     # Each row is a timestamp. Since the accelerometer sensor is at 25Hz, it means 1 timestamp has 25 mini steps.
     rotated_acc_list = list()
     for x_s, y_s, z_s in tqdm(decoded_acc_df[['x', 'y', 'z']].values, 
-                              desc="Aggregating accelerometer signals from 25Hz to 1Hz."):
+                              desc="Rotating accelerometer signals."):
+        
         # x_s, y_s, and z_s are a list of 25 mini steps.  
         rotated_acc_mini_step_list = list()
         
@@ -87,9 +90,9 @@ def decode_acc_hex(acc_hex, speed):
             B = np.dot(R,A)
             rotated_acc_mini_step_list.append(B[:, 0])
         
-        # OBD's frequency is 1Hz. If we "upsampling", it will lead to 25 times of duplicate OBD data.
-        # A wise way is to aggregate 25Hz (25 mini steps) into 1Hz by using mean.
-        rotated_acc = np.asarray(rotated_acc_mini_step_list).mean(axis=0)
-        rotated_acc_list.append({'acc_x':rotated_acc[0], 'acc_y':rotated_acc[1], 'acc_z':rotated_acc[2]})
+        rotated_acc = np.asarray(rotated_acc_mini_step_list)#.mean(axis=0)
+        rotated_acc_list.append({'acc_x':rotated_acc[:, 0], 'acc_y':rotated_acc[:, 1], 'acc_z':rotated_acc[:, 2]})     
     
     return pd.DataFrame(rotated_acc_list).apply(pd.Series)
+
+    
